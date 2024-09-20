@@ -1,0 +1,166 @@
+Reinforcement Learning, Part 2: Introducing
+Markov Process
+Step one to understanding MDP: the Markov Process
+dan lee · Follow
+Published in AI³ | Theory, Practice, Business
+4 min read · Oct 24, 2019
+Welcome back to my AI blog! In my last post, I gave a brief introduction to
+Reinforcement Learning. Today, I’ll help you continue your journey by
+introducing the Markov Process, which we will need to understand before
+broaching the Markov Decision Process (MDP) used in Reinforcement Learning.
+By the end, you will have a basic knowledge of:
+What the Markov Property and Markov Chain are;
+How the Markov Property works;
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comHow the Markov Chain put the Markov Property into action.
+Introducing the Markov Process
+To open our discussion, let’s lay out some key terminologies with their definitions
+from Wikipedia first. Then we’ll dig a little deeper.
+Markov Property: In probability theory and statistics, the term Markov Property
+refers to the memoryless property of a stochastic — or randomly determined —
+process.
+Markov Chain: A Markov Chain is a stochastic model describing a sequence of
+possible events in which the probability of each event depends only on the state
+attained in the previous event.
+Expanding on the Markov Property
+To deepen our understanding of the Markov Property, we can view it as follows:
+P(X(t+1)=j|X(0)=i0,X(1)=i1,…,X(t)=i)=P(X(t+1)=j|X(t)=i)
+Put in words, the formula represents a situation in which the state of X at time t+1
+only depends on one preceding state of X at time t, and is independent of past
+states X(t−1), …, X(1).
+Now let’s shed more light on this with a simple example.
+In string “easy”, according to Markov Property, we have:
+P(x3=y | x0=e, x1=a, x2=s) represents the probability that y appears at time 3
+when e appears at time 0, a appears at time 1 and s appears at time 2
+P(x3=y|x2=s) represents the probability that y appears at time 3 when s appears
+at time 2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comSo, in the above equation, Markov Property makes the P(easy) easier to compute
+with the assumption that y only depends on the previous neighbor state s and is
+independent of e and a. It means that when y in “easy” is generated, we only care
+about the transition probability from s to y instead of the transition probability
+from eas to y.
+Of course, we know it may not work like this in the real world, but the hypothesis
+is useful nonetheless. It helps us make complicated situations computable and
+most of the time it works quite well.
+Understanding the Markov Chain
+When we put the Markov Property to work in a random process, we call it a
+Markov Chain.
+Figure 1: Markov Chain
+Here is the formulated definition of a Markov Chain:
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comUsing Figure 1 above, we can demonstrate how a Markov Chain can generate
+words.
+Assume we start separately from state e, a, and t, with the respective probability of
+40%, 30%, and 30%. According to Markov Property, a string can be generated
+letter by letter — taking into consideration only the letter immediately before it.
+For example, we have a 40% probability of starting with e at time 0. Then we move
+from state e to state a at time 1 to get ea. To arrive at the word eat, we move directly
+from state a to state t at time 2, without regard for the earlier state e.
+With the above computations, we can see that this Markov Chain gives eat and tea
+an equally high score, while aet gets the lowest score. The formula indicates that
+eat and tea are more like words, while aet appears not to be one at all.
+Summary
+In this short introduction of Markov, we’ve learned:
+How the Markov Property and Chain are defined.
+How the Markov Property can compute word probability.
+How the Markov Chain can generate words.
+Now, we’re primed and ready for our discussion of the Markov Decision Process.
+Coming next week; don’t miss it!
+Machine Learning
+AI
+Artificial Intelligence
+Reinforcement Learning
+Markov Chains
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comWritten by dan lee
+415 Followers · Writer for AI³ | Theory, Practice, Business
+NLP Engineer, Google Developer Expert, AI Specialist in Yodo1
+More from dan lee and AI³ | Theory, Practice, Business
+dan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 1: A Brief Introduction
+What is Reinforcement Learning and how is it used? Find out in 5 minutes!
+6 min read · Oct 17, 2019
+669
+2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comMarvin Wang, Min in AI³ | Theory, Practice, Business
+Use GPU in your PyTorch code
+Recently I installed my gaming notebook with Ubuntu 18.04, and took some time to make
+Nvidia driver as the default graphics driver ( since…
+4 min read · Sep 9, 2019
+137
+1
+Jelal Sultanov in AI³ | Theory, Practice, Business
+Standard Deviation & Variation concepts and Covariance & Correlation
+Techniques in ML
+Today we will have a look at one of the fundamental concepts in ML such as Standart
+Deviation and Variation, Covariance and Correlation…
+3 min read · Aug 26, 2019
+118
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com118
+1
+dan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 5: Monte-Carlo and Temporal-Difference
+Learning
+A step-by-step approach to understanding Q-learning
+6 min read · Nov 21, 2019
+1K
+1
+See all from dan lee
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comRecommended from Medium
+Mohamed Yosef
+Reinforcement Learning — Policy gradient 101
+There are two approaches for solving any RL problem; value-based methods and policy-
+based methods. Policy gradient is a policy-based…
+5 min read · Feb 19, 2024
+101
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comSushant Upadhyay
+Time-LLMs: Transforming Time Series Forecasting with Language
+Models
+Imagine harnessing the remarkable capabilities of language models like me to predict
+numerical outcomes. That’s precisely the ambitious…
+2 min read · Feb 19, 2024
+Lists
+108
+Natural Language Processing
+1228 stories · 714 saves
+Predictive Modeling w/ Python
+20 stories · 944 saves
+AI Regulation
+6 stories · 335 saves
+Generative AI Recommended Reading
+52 stories · 757 saves
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comRafał Buczyński in Python in Plain English
+Understanding Markov Decision Processes
+1. Introduction to Markov Decision Processes
+8 min read · Aug 31, 2023
+150
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comKrishna Jadhav
+Reinforcement Learning | Machine Learning Python implementation of
+the Q-learning algorithm
+In this publication, Krishna Jadhav provided a comprehensive overview of Reinforcement
+Learning and Q-learning algorithms.
+3 min read · Dec 2, 2023
+2
+Henry Wu
+Intro to Reinforcement Learning: Monte Carlo to Policy Gradient
+This post is an intro to reinforcement learning, in particular, Monte Carlo methods, Temporal
+Difference Learning, Deep Q-learning, Policy…
+16 min read · Feb 15, 2024
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com124
+Vaibhav Rastogi
+ANN, DNN, CNN, RNN, LLM
+ANN (Artificial Neural Network):
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com2 min read · Oct 10, 2023
+7
+See more recommendations
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com

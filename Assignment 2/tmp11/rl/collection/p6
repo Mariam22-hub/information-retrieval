@@ -1,0 +1,277 @@
+Reinforcement Learning, Part 6: TD(λ) & Q-
+learning
+Understanding Q-learning in action and by example
+dan lee · Follow
+Published in AI³ | Theory, Practice, Business
+7 min read · Dec 13, 2019
+Welcome back to my series on Reinforcement Learning! Now that we’ve covered
+the building blocks, it’s time to discuss TD(λ) and Q-learning.
+In this post, I’ll use a simple example to help you understand Q-learning and
+answer the following questions:
+What is TD(λ) and how is it used?
+How does Q-learning’s classic off-policy method work?
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comWhat does a Python realization of Q-learning look like?
+If you’re new to the series, be sure to check out these posts first:
+Part 1: A Brief Introduction to RL
+Part 2: Introducing the Markov Process
+Part 3: Markov Decision Process (MDP)
+Part 4: Optimal Policy Search with MDP
+Part 5: Monte-Carlo and Temporal-Difference Learning
+Let’s get started with Q-learning!
+Temporal-Difference Learning: TD(λ)
+In my last post, we mentioned that if we replace Gt in the MC-updated formula
+with an estimated return Rt+1+V(St+1), we can get TD(0):
+Where:
+Rt+1+V(St+1) is called TD target value
+）
+Rt+1+V(St+1)- V(St is called TD error
+Now, we replace the TD target value with Gt(), we can have TD(λ). Gt()is generated
+as below:
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comSo the TD(λ) formula is:
+In which:
+As discussed, Q-learning is a combination of Monte Carlo (MC) and Temporal
+Difference (TD) learning. With MC and TD(0) covered in Part 5 and TD(λ) now
+under our belts, we’re finally ready to pull out the big guns!
+Q-Learning
+Q-Value formula:
+From the above, we can see that Q-learning is directly derived from TD(0). For
+each updated step, Q-learning adopts a greedy method: maxaQ (St+1, a).
+This is the main difference between Q-learning and another TD-based method
+called Sarsa, which I won’t explain in this series. But as an RL learner, you should
+know that Q-learning is not the only method based on TD.
+An Example of How Q-Learning Works
+Let’s try to understand this better with an example:
+You’re having dinner with friends at an Italian restaurant and, because you’ve
+been here once or twice before, they want you to order. From experience, you
+know that the Margherita pizza and pasta Bolognese are delicious. So if you have
+to order ten dishes, experience might tell you to order five of each. But what about
+everything else on the menu?
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comIn this scenario, you are like our “agent”, tasked with finding the best combination
+of ten dishes. Imagine this becomes a weekly dinner; you’d probably start
+bringing a notebook to record information about each dish. In Q-learning, the
+agent collects Q-values in a Q-table. For the restaurant menu, you could think of
+these values as a score for each dish.
+Now let’s say your party is back at the restaurant for the third time. You’ve got a bit
+of information in your notebook now but you certainly haven’t explored the whole
+menu yet. How do you decide how many dishes to order from your notes — which
+you know are good, and how many new ones to try?
+This is where ε-greedy comes into play.
+The ε-greedy Exploration Policy
+In the above example, what happened in the restaurant is like our MDP (Markov
+Decision Process) and you, as our “agent” can only succeed in finding the best
+combination of dishes for your party if you explore it thoroughly enough.
+So it is with Q-Learning: it can work only if the agent explores the MDP thoroughly
+enough. Of course, this would take an extremely long time. Can you imagine how
+many times you’d have to go back to the restaurant to try every dish on the menu
+in every combination?
+This is why Q-learning uses the ε-greedy policy, which is ε degree “greedy” for the
+highest Q values and 1 — ε degree “greedy” for random exploration.
+In the initial stages of training an agent, a random exploration environment (i.e.
+trying new things on the menu) is often better than a fixed behavior mode (i.e.
+ordering what you already know is good) because this is when the agent
+accumulates experience and fills up the Q-table.
+Thus, it’s common to start with a high value for ε, such as 1.0. This means the
+agent will spend 100% of its time exploring (e.g. using a random policy) instead of
+referring to the Q-table.
+From there, the value of ε can be gradually decreased, making the agent more
+greedy for Q-values. For example, if we drop ε to 0.9, it means the agent will spend
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com90% of its time choosing the best strategy based on Q-table, and 10% of its time
+exploring the unknown.
+The advantage of the ε-greedy policy, compared to a completely greedy one, is that
+it always keeps testing unknown regions of the MDP. Even when the target policy
+seems optimal, the algorithm never stops exploring: it just keeps getting better
+and better.
+There are various functions for exploration, and many defined exploration
+policies can be found online. Do note that not all exploration policies are expected
+to work for both discrete and continuous action spaces.
+A Python Realization of Q-Learning
+Here is how Q-learning can be implemented:
+import numpy as np
+# Q
+q = np.matrix(np.zeros([6, 6]))
+# Reward
+r = np.matrix([[-1, -1, -1, -1,
+[-1, -1, -1,0, -1, 100],
+[-1, -1, -1,0, -1,
+[-1,
+0,
+0, -1,
+[ 0, -1, -1,
+[-1,
+0,
+0,
+-1],
+-1],
+-1],
+0, -1, 100],
+0, -1, -1,
+0, 100]])
+gamma = 0.8
+epsilon = 0.4
+# the main training loop
+for episode in range(101):
+# random initial state
+state = np.random.randint(0, 6)
+# if not final state
+while (state != 5):
+# choose a possible action
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com# Even in random case, we cannot choose actions whose r[state,
+action] = -1.
+possible_actions = []
+possible_q = []
+for action in range(6):
+if r[state, action] >= 0:
+possible_actions.append(action)
+possible_q.append(q[state, action])
+# Step next state, here we use epsilon-greedy algorithm.
+action = -1
+if np.random.random() < epsilon:
+# choose random action
+action = possible_actions[np.random.randint(0,
+len(possible_actions))]
+else:
+# greedy
+action = possible_actions[np.argmax(possible_q)]
+# Update Q value
+q[state, action] = r[state, action] + gamma * q[action].max()
+# Go to the next state
+state = action
+# Display training progress
+if episode % 10 == 0:
+print("------------------------------------------------")
+print("Training episode: %d" % episode)
+print(q)
+Given enough iterations, this algorithm will converge to the optimal Q-Values.
+This is called an off-policy algorithm because the policy being trained is not the
+one being executed.
+Note: The code above is from
+https://blog.csdn.net/zjm750617105/article/details/80295267
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comIn Summary
+Q-Learning is an off-policy algorithm based on the TD method. Over time, it
+creates a Q-table, which is used to arrive at an optimal policy. In order to learn
+that policy, the agent must explore. The usual way to do this is by making the
+agent follow a different, random policy that initially ignores the Q-table when
+selecting actions.
+And that’s all for today; you made it! With this article, we’ve rounded off our
+discussion of TD and from it, I hope you‘ve gained a basic knowledge of:
+Temporal-Difference Learning: TD target value, TD error, and TD(y)
+A Python realization of Q-learning
+Q-learning exploration policy with ε-greedy
+TD and Q-learning are quite important in RL because a lot of optimized methods
+are derived from them. There’s Double Q-Learning, Deep Q-Learning, and so the
+list goes on.
+On top of that, there are some other methods — quite different from TD and Q-
+learning — which we haven’t touched on in this series yet, like Policy Gradient
+(PG).
+I will be introducing many of these methods in upcoming posts. If there’s
+anything you’re particularly eager to learn, please feel free to leave me a message
+in the comments. I’ll determine the order of priority based on your needs.
+Thanks for reading! If you enjoyed this article, please hit the clap button as many
+times as you can. It would mean a lot and encourage me to keep sharing my
+knowledge.
+Questions or thoughts to add? I’d love to hear from you in the comments!
+Follow me here to catch my next post.
+Machine Learning
+Artificial Intelligence
+AI
+Q Learning
+Reinforcement Learning
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comWritten by dan lee
+415 Followers · Writer for AI³ | Theory, Practice, Business
+NLP Engineer, Google Developer Expert, AI Specialist in Yodo1
+More from dan lee and AI³ | Theory, Practice, Business
+dan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 1: A Brief Introduction
+What is Reinforcement Learning and how is it used? Find out in 5 minutes!
+6 min read · Oct 17, 2019
+669
+2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comMarvin Wang, Min in AI³ | Theory, Practice, Business
+Use GPU in your PyTorch code
+Recently I installed my gaming notebook with Ubuntu 18.04, and took some time to make
+Nvidia driver as the default graphics driver ( since…
+4 min read · Sep 9, 2019
+137
+1
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comdan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 4: Optimal Policy Search with MDP
+Training an agent to make decisions that will maximize rewards over time
+6 min read · Nov 9, 2019
+316
+5
+dan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 5: Monte-Carlo and Temporal-Difference
+Learning
+A step-by-step approach to understanding Q-learning
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com6 min read · Nov 21, 2019
+1K
+1
+Recommended from Medium
+Mohamed Yosef
+Reinforcement Learning — Policy gradient 101
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comThere are two approaches for solving any RL problem; value-based methods and policy-
+based methods. Policy gradient is a policy-based…
+5 min read · Feb 19, 2024
+101
+Henry Wu
+Intro to Reinforcement Learning: Monte Carlo to Policy Gradient
+This post is an intro to reinforcement learning, in particular, Monte Carlo methods, Temporal
+Difference Learning, Deep Q-learning, Policy…
+16 min read · Feb 15, 2024
+124
+Lists
+Natural Language Processing
+1228 stories · 714 saves
+Predictive Modeling w/ Python
+20 stories · 944 saves
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comAI Regulation
+6 stories
+335 saves
+·
+Generative AI Recommended Reading
+52 stories
+757 saves
+·
+Krishna Jadhav
+Reinforcement Learning | Machine Learning Python implementation of
+the Q-learning algorithm
+In this publication, Krishna Jadhav provided a comprehensive overview of Reinforcement
+Learning and Q-learning algorithms.
+3 min read · Dec 2, 2023
+2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comRyan Pégoud in Towards Data Science
+Temporal-Difference Learning and the importance of exploration: An
+illustrated guide
+A comparison of model-free (Q-learning) and model-based (Dyna-Q and Dyna-Q+) TD
+methods on a dynamic grid world.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com15 min read · Sep 23, 2023
+212
+2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comAditya
+Reinforcement Learning in Chess
+11 min read · Nov 23, 2023
+350
+2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comRafał Buczyński in Python in Plain English
+Understanding Markov Decision Processes
+1. Introduction to Markov Decision Processes
+8 min read · Aug 31, 2023
+150
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com

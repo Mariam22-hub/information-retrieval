@@ -1,0 +1,234 @@
+Reinforcement Learning, Part 5: Monte-Carlo
+and Temporal-Difference Learning
+A step-by-step approach to understanding Q-learning
+dan lee · Follow
+Published in AI³ | Theory, Practice, Business
+6 min read · Nov 21, 2019
+Previous posts in my Reinforcement Learning series:
+1. A Brief Introduction to RL
+2. Introducing the Markov Process
+3. Markov Decision Process (MDP)
+4. Optimal Policy Search with MDP
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comNow that we’ve covered MDP, it’s time to discuss Q-learning. To develop our
+knowledge of this topic, we need to build a step-by-step understanding of:
+dynamic programming (DP): introduced in our discussion of MDP
+Monte-Carlo (MC) learning: to adapt when information is lacking
+The simplest Temporal Difference learning, TD(0): a combination of DP and
+MC
+Once we’ve covered Monte Carlo and Temporal Difference Learning, we will
+arrive at the more well-known Q-learning.
+Let’s get started!
+MDP and Dynamic Programming
+In the last few parts of my series, we’ve been learning how to solve problems with
+a Markov Decision Process (MDP). To do this, we evaluate a given strategy using
+dynamic programming (DP) and arrive at the optimal value function through
+continuous iteration.
+Let’s lay out and review a few key terms to help us proceed:
+dynamic programming: breaking a large problem down into incremental
+steps so optimal solutions to sub-problems can be found at any given stage
+model: a mathematical representation of a real-world process (see “Learning
+with Adam” in Part 3)
+Bellman Optimality Equation: gives us the means to estimate the optimal
+value of each state (see Part 4)
+Now it’s important to note that MDP only works with a known model, in which all
+five tuples (shown below) are evident.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comStarting with this article, we will enter into solving an MDP problem when part of
+the model is unknown.
+In this case, our agent must learn from the environment by interacting with it and
+collecting experiences, or samples. In doing so, the agent carries out strategy
+evaluation and iteration and can obtain the optimal strategy.
+Since the theory to support this approach comes from the Monte-Carlo method,
+let’s start by discussing Monte Carlo learning.
+Monte-Carlo Learning
+We’ve learned that an entire problem can be transformed into a Markov Decision
+Process (MDP), which makes decisions with the five tuples < s, P, a, R, γ > above.
+When we know all five, it’s easy to calculate an optimal strategy to get the
+maximum reward. However, in the real world, we almost never have all of this
+information at the same time.
+For example, the state transition probability (P) is difficult to know and, without
+it, we can’t use the Bellman Equation below to solve V and Q values.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comBut what if we have to solve a problem without knowing P? How can we transform
+it into a Markov Decision Process?
+First, consider that although we don’t know what the state transition probability P
+is, we do know objectively that it exists. Therefore, we simply have to find it.
+To do so, we can have our agent run trials, constantly collecting samples, getting
+rewards, and thereby evaluating the value function. This is exactly how the
+Monte-Carlo method works: try many times, and the final estimated V value will
+be very close to the real V value.
+Monte-Carlo Evaluation
+As mentioned, the Monte-Carlo method involves letting an agent learn from the
+environment by interacting with it and collecting samples. This is equivalent to
+sampling from the probability distribution P(s, a, s’) and R(s, a).
+However, Monte-Carlo (MC) estimation is only for trial-based learning. In other
+words, an MDP without the P tuple can learn by trial-and-error, through many
+repetitions.
+In this learning process, each “try” is called an episode, and all episodes must
+terminate. That is, the final state of the MDP should be reached. Values for each
+state are updated only based on final reward Gt, not on estimations of neighbor
+states — as occurs in the Bellman Optimality Equation.
+MC learns from complete episodes and is therefore only suitable for what we call
+episodic MDP.
+Here is our updated state value formula:
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comIn which:
+V(St) is the state value that we are going to estimate, which can be initialized
+randomly or with a certain strategy.
+Gt is calculated above, T is the terminate time.
+is a parameter like learning rate. It can influence the convergence.
+Various Methods to Get V(St)
+Consider this: If the state s appears twice in an episode at time t + 1 and time t + 2
+respectively, do we use one or both when calculating the value of the state s? And
+how often do we updateV(St)? Our answers to these questions will leads us to
+different approaches:
+First-Visit Monte-Carlo Policy Evaluation
+With policy ( could be a random policy just as we used in previous articles) for
+each episode, only the first time that the agent arrives at S counts:
+EverEvery-Visit Monte-Carlo Policy Evaluation
+With policy ( could be a random policy just as we used in previous articles) for
+each episode, every time that the agent arrives at S counts:
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comIncremental Monte-Carlo Updates
+For each state St in the episode, there is a reward Gt, and for every timeSt appears,
+the average value of the state,V(St) is calculated by the following formula:
+Temporal-Difference Learning
+The Monte-Carlo reinforcement learning algorithm overcomes the difficulty of
+strategy estimation caused by an unknown model. However, a disadvantage is that
+the strategy can only be updated after the whole episode.
+In other words, the Monte Carlo method does not make full use of the MDP
+learning task structure. Luckily, that’s where the more efficient Temporal-
+Difference (TD) method comes in, making full use of the MDP structure.
+Temporal-Difference Learning: A Combination of Deep Programming
+and Monte Carlo
+As we know, the Monte Carlo method requires waiting until the end of the episode
+to determine V(St). The Temporal-Difference or TD method, on the other hand,
+only needs to wait until the next time step.
+That is, at time t + 1, the TD method uses the observed reward Rt+1and
+immediately forms a TD target R(t+1)+V(St+1), updating V(St) with TD error
+(which we’ll define below).
+Having addressed the shortcomings of Monte Carlo, we’re ready to further discuss
+Temporal-Difference learning. The famous Q-learning algorithm falls within the
+TD method, but let’s start with the simplest one, called TD (0).
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comTD (0)
+In Monte-Carlo, Gt is an actual return from the complete episode. Now, if we
+replace Gt with an estimated return R(t+1)+V(St+1), this is what TD(0) would look
+like:
+Where:
+R(t+1)+V(St+1) is called TD target value
+）
+R(t+1)+V(St+1)- V(St is called TD error.
+MC uses accurate return Gt to update value, while TD uses the Bellman Optimality
+Equation to estimate value, and then updates the estimated value with the target
+value.
+Summary
+You made it! From this article, I hope you‘ve gained a basic knowledge of:
+MC: Monte-Carlo Learning
+TD: Temporal-Difference Learning
+The simplest TD learning, TD (0)
+Next time, we’ll introduce a more complex TD learning, TD(), which will lead us
+directly to Q-learning.
+Thanks for reading! If you enjoyed this article, please hit the clap button as many
+times as you can. It would mean a lot and encourage me to keep sharing my
+knowledge.
+Questions or thoughts to add? I’d love to hear from you in the comments!
+Follow me here to catch my next post.
+Machine Learning
+AI
+Artificial Intelligence
+Reinforcement Learning
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comTemporal Difference
+Written by dan lee
+415 Followers · Writer for AI³ | Theory, Practice, Business
+NLP Engineer, Google Developer Expert, AI Specialist in Yodo1
+More from dan lee and AI³ | Theory, Practice, Business
+dan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 1: A Brief Introduction
+What is Reinforcement Learning and how is it used? Find out in 5 minutes!
+6 min read · Oct 17, 2019
+669
+2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comMarvin Wang, Min in AI³ | Theory, Practice, Business
+Use GPU in your PyTorch code
+Recently I installed my gaming notebook with Ubuntu 18.04, and took some time to make
+Nvidia driver as the default graphics driver ( since…
+4 min read · Sep 9, 2019
+137
+1
+Jelal Sultanov in AI³ | Theory, Practice, Business
+Standard Deviation & Variation concepts and Covariance & Correlation
+Techniques in ML
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comTechniques in ML
+Today we will have a look at one of the fundamental concepts in ML such as Standart
+Deviation and Variation, Covariance and Correlation…
+3 min read · Aug 26, 2019
+118
+1
+dan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 4: Optimal Policy Search with MDP
+Training an agent to make decisions that will maximize rewards over time
+6 min read · Nov 9, 2019
+316
+5
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comRecommended from Medium
+Mohamed Yosef
+Reinforcement Learning — Policy gradient 101
+There are two approaches for solving any RL problem; value-based methods and policy-
+based methods. Policy gradient is a policy-based…
+5 min read · Feb 19, 2024
+101
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comRyan Pégoud in Towards Data Science
+Temporal-Difference Learning and the importance of exploration: An
+illustrated guide
+A comparison of model-free (Q-learning) and model-based (Dyna-Q and Dyna-Q+) TD
+methods on a dynamic grid world.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com15 min read · Sep 23, 2023
+212
+2
+Lists
+Natural Language Processing
+1228 stories · 714 saves
+Predictive Modeling w/ Python
+20 stories · 944 saves
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comAI Regulation
+6 stories · 335 saves
+Generative AI Recommended Reading
+52 stories · 757 saves
+Henry Wu
+Intro to Reinforcement Learning: Monte Carlo to Policy Gradient
+This post is an intro to reinforcement learning, in particular, Monte Carlo methods, Temporal
+Difference Learning, Deep Q-learning, Policy…
+16 min read · Feb 15, 2024
+124
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comRafał Buczyński in Python in Plain English
+Understanding Markov Decision Processes
+1. Introduction to Markov Decision Processes
+8 min read · Aug 31, 2023
+150
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comKim Rodgers
+Reinforcement Learning Introduction: Exploration vs Exploitation with
+Multi-Armed Bandits
+Introduction
+5 min read · Jan 9, 2024
+18
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comKrishna Jadhav
+Reinforcement Learning | Machine Learning Python implementation of
+the Q-learning algorithm
+In this publication, Krishna Jadhav provided a comprehensive overview of Reinforcement
+Learning and Q-learning algorithms.
+3 min read · Dec 2, 2023
+2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com

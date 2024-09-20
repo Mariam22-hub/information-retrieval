@@ -1,0 +1,247 @@
+Reinforcement Learning, Part 7: A Brief
+Introduction to Deep Q Networks
+Build your understanding of DQN in three easy steps
+dan lee · Follow
+Published in AI³ | Theory, Practice, Business
+6 min read · Jan 30, 2020
+Welcome back to my series on Reinforcement Learning! Now that we’ve covered
+Q-learning, it’s time to introduce Deep Learning within RL.
+In this post, we’ll discuss:
+Why the introduction of Deep Learning to RL is so important;
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comWhat challenges it comes with and how we can solve them; and how can we
+solve them;
+How we can build a DQN.
+If you’re new to the series, be sure to check out these posts first:
+Part 1: A Brief Introduction to RL
+Part 2: Introducing the Markov Process
+Part 3: Markov Decision Process (MDP)
+Part 4: Optimal Policy Search with MDP
+Part 5: Monte-Carlo and Temporal-Difference Learning
+Part 6:TD(λ) & Q-learning
+Now it’s time to dive in a little deeper!
+Why Deep Learning?
+In Q-learning, when the state and action space are discrete and the dimension is
+low, a Q-Table can be used to store the Q value of each state-action pair. However,
+when the state and action space are high-dimensional and continuous, a Q-Table
+wouldn’t be qualified.
+A common solution is to turn the Q-Table-update problem into a Function-fitting
+problem and get similar output actions for similar states. The Q function
+approximates the optimal Q value by updating the parameter θ:
+Q (s, a; θ) ≈Q ′ (s, a)
+Deep neural networks, which can automatically extract complex features. They
+are the ticket for dealing with high-dimensional Q-Tables with continuous states.
+DQN is one of many algorithms that combines Deep Learning and Reinforcement
+Learning to learn strategies directly from high-dimensional raw data. By
+combining a convolutional neural network (CNN) with Q-Learning, DQN
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.compromoted the development of Reinforcement Learning and expanded its
+application scenarios.
+The input of CNN can be the original image data (as the state), and the output is
+each action-corresponding value evaluation (Q value).
+Google’s Deepmind team published two papers on DQN:
+Playing Atari with Deep Reinforcement Learning on NIPS in 2013;
+Human-level control through deep reinforcement learning on Nature in 2015.
+As these articles cover the foundational idea of DQN, I’ll reference them
+throughout this post.
+Step 1: Understanding the Challenges of Applying Deep Learning to RL
+Distribution of Samples
+A major reason for deep learning to converge with RL is that data sets require
+independent and identical distributions. Only models trained by deep learning on
+this kind of data set could better fit the potential patterns in the data set and
+obtain ideal results.
+But, as we’ve discussed extensively in this series, Reinforcement Learning learns
+from reward and a series of highly related states. The agents may change the data
+distribution as the algorithm learns new behaviors, leading to the inability to
+converge.
+Therefore, if you want to apply deep learning algorithms to Reinforcement
+Learning, you must cut off the correlation of states and stabilize the distribution
+of the data set.
+Supervised Issues
+Deep learning is a standard form of supervised learning. Before training, the
+target of the ideal model that you want to train already exists — only it’s hidden.
+Through deep iteration, deep learning makes the algorithm converge so that it can
+find the ideal model.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comIn contrast, Reinforcement Learning is learning from sparse, noisy, and delayed
+reward signals. If you want to apply deep learning algorithms to Reinforcement
+Learning, you must design a target for each update iteration.
+For a refresher on the difference between supervised and unsupervised learning,
+jump back to my first post: a brief introduction to Reinforcement Learning.
+Step 2: Solving The Contradiction Between Supervised Deep Learning
+And Unsupervised RL
+Here are two solutions to the challenges discussed above.
+Sample Distribution
+According to Deepmind’s 2013 paper, the experience mechanism can solve the
+problem of the sample distribution. Here’s how it works:
+1. Initialize. The agent will be initialized with a state s, then input the state s into
+the evaluation network (a neural network, described later), and output the q
+value of each action.
+2. Select action. The agent selects the action performed in this state through the
+q value and the exploration and exploitation algorithm.
+3. Feedback. At the state s, we choose action a, the environment will provide
+feedback — in the form of a reward — and give the agent its next state s’.
+4. Sequence. At this point, a sequence (s, a, r, s’) is reached, where s is the
+current state, a is the action performed in state s, r is the reward that the
+environment feeds back to the agent, and s’ is the next state. A sequence (s, a,
+r, s’) constitutes a training sample.
+5. Parameters. Set the size of the experience pool to N. That means, only N latest
+sequences exist in the experience pool. Sequences larger than N will overwrite
+the samples in the experience pool. The data in the empirical pool is used
+every time the neural network parameters are updated.
+6. Convergence. The existence of the experience pool turns a series of highly
+correlated states into discrete data samples. It can reduce the training
+variance and stabilize the sample distribution, which is conducive to the
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comconvergence of the algorithm. Just like a human being, an agent can learn
+from its own historical experience.
+Solving Supervised Issues
+In order to solve the contradiction between Reinforcement Learning and
+supervised deep learning, Deepmind’s 2013 paper outlines the designs of two
+neural networks.
+One neural network is a prediction network (critic):
+The input is the current state — the first element s in the sample sequence.
+The output is the q value generated by each action.
+The agent uses the q value of each output to determine the state to be
+executed.
+The parameters of this network can be updated at any time.
+The other neural network is the evaluation network (actor):
+The input is the next state; that is, the fourth element s’ in the sample
+sequence. The output is the q value (q_next) of each action of the state s’.
+Next, the Bellman equation (q_target = r + γ * max (q_next)) calculates the
+target q value for performing action a in the state s.
+The output of the evaluation network passes through the Bellman equation,
+and the target q value of the calculated result can be used as the label of the
+prediction network.
+Thus, the above [steps/networks] can solve the contradiction between supervised
+deep learning and unsupervised Reinforcement Learning.
+In order to suppress the problem of correlation between states, the parameters of
+the evaluation network are not updated in real-time. Instead, after a certain
+number of steps, the prediction network will copy its parameters to the evaluation
+network.
+Now, let’s put the main architecture of DQN into simple terms.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comStep 3: Building Your Own DQN
+Replay Memory
+Replay memory stores the experiences that the actor DQN records via playing the
+game. These experiences will be used as training data by the critic DQN later on.
+By sampling randomly from the experience data, a batch of transitions is built
+and data in it are decorrelated.
+How Does DQN Work?
+The actor DQN can be used to play games, though initially, it does so very badly.
+Let the actor play for a while, then save all its experiences in a replay memory.
+Each memory will be a 5-tuple (state, action, next state, reward, continue).
+The “continue” item will be 0.0 when the game is over or 1.0 otherwise.
+At regular intervals, we can sample a batch of memories from the replay memory
+— just like we do with dynamic training data in supervised learning. We use these
+memories to estimate the Q-Values.
+You want the actor to explore the game thoroughly, so you may want to combine it
+with a ε-greedy policy.
+The critic DQN will adjust its parameters to make its Q-Value predictions
+approximate the result estimated by the actor through the actor’s experience data.
+Regular supervised learning techniques can work on those data.
+Copy the critic DQN to the actor DQN at regular intervals, and that’s it!
+Summary
+In short, DQN is a success! And you’re well on your way to understanding and
+being able to use it!
+You should now be familiar with basic concepts of:
+Deep Reinforcement Learning (DRL): the combination of DL and RL
+DQN: a typical method of DRL
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comIn my next post, we will explore DRL even more deeply.
+Thanks for reading! If you enjoyed this article, please hit the clap button as many
+times as you can. It would mean a lot and encourage me to keep sharing my
+knowledge.
+Questions or thoughts to add? I’d love to hear from you in the comments!
+Reinforcement Learning
+Deep Learning
+Machine Learning
+Written by dan lee
+415 Followers · Writer for AI³ | Theory, Practice, Business
+NLP Engineer, Google Developer Expert, AI Specialist in Yodo1
+More from dan lee and AI³ | Theory, Practice, Business
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comdan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 1: A Brief Introduction
+What is Reinforcement Learning and how is it used? Find out in 5 minutes!
+6 min read · Oct 17, 2019
+669
+2
+Marvin Wang, Min in AI³ | Theory, Practice, Business
+Use GPU in your PyTorch code
+Recently I installed my gaming notebook with Ubuntu 18.04, and took some time to make
+Nvidia driver as the default graphics driver ( since…
+4 min read · Sep 9, 2019
+137
+1
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comJelal Sultanov in AI³ | Theory, Practice, Business
+Standard Deviation & Variation concepts and Covariance & Correlation
+Techniques in ML
+Today we will have a look at one of the fundamental concepts in ML such as Standart
+Deviation and Variation, Covariance and Correlation…
+3 min read · Aug 26, 2019
+118
+1
+dan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 5: Monte-Carlo and Temporal-Difference
+Learning
+A step-by-step approach to understanding Q-learning
+6 min read · Nov 21, 2019
+1K
+1
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comSee all from dan lee
+Recommended from Medium
+Mohamed Yosef
+Reinforcement Learning — Policy gradient 101
+There are two approaches for solving any RL problem; value-based methods and policy-
+based methods. Policy gradient is a policy-based…
+5 min read · Feb 19, 2024
+101
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comHenry Wu
+Intro to Reinforcement Learning: Monte Carlo to Policy Gradient
+This post is an intro to reinforcement learning, in particular, Monte Carlo methods, Temporal
+Difference Learning, Deep Q-learning, Policy…
+16 min read · Feb 15, 2024
+124
+Lists
+Predictive Modeling w/ Python
+20 stories · 944 saves
+Practical Guides to Machine Learning
+10 stories · 1114 saves
+Natural Language Processing
+1228 stories · 714 saves
+data science and AI
+40 stories · 85 saves
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comHennie de Harder in Towards Data Science
+Techniques to Improve the Performance of a DQN Agent
+Reinforcement learning challenges and how to solve them.
+· 11 min read · Nov 30, 2022
+156
+1
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comAmanatullah
+Transformer Architecture explained
+Transformers are a new development in machine learning that have been making a lot of
+noise lately. They are incredibly good at keeping…
+10 min read · Sep 1, 2023
+430
+5
+Vaibhav Rastogi
+ANN, DNN, CNN, RNN, LLM
+ANN (Artificial Neural Network):
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com2 min read · Oct 10, 2023
+7
+Aditya
+Reinforcement Learning in Chess
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com11 min read · Nov 23, 2023
+350
+2
+See more recommendations
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com

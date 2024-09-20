@@ -1,0 +1,235 @@
+Reinforcement Learning, Part 4: Optimal
+Policy Search with MDP
+Training an agent to make decisions that will maximize rewards over time
+dan lee · Follow
+Published in AI³ | Theory, Practice, Business
+6 min read · Nov 9, 2019
+Welcome back to my AI blog! We’ve already learned a lot, so let’s recap what we’ve
+covered in my Reinforcement Learning series so far:
+Part 1: A Brief Introduction To Reinforcement Learning (RL)
+Part 2: Introducing the Markov Process
+Part 3: Markov Decision Process (MDP)
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comThe last step in using MDP is an optimal policy search — which we’ll cover today.
+By the end of this article, you will have a basic knowledge of:
+How to evaluate an action;
+How to implement an optimal policy search.
+As you’ll recall from part three, we’ve been describing and evaluating states and
+actions for a young man named Adam.
+Now, our agent is nearly ready to help him make the sequential decisions that will
+lead to earning the greatest possible amount of money. Let’s do it!
+Optimal Policy Search: How Agents Choose the Best Path
+Now that we understand MDP, we can think of it as the environment in which an
+agent works. To maximize rewards over time, this agent needs to find an optimal
+policy. That is, it must determine the best action to take at each state.
+⏩ optimal policy: the best action to take at each state, for maximum rewards over
+time
+To help our agent do this, we need two things:
+1. A way to determine the value of a state in MDP.
+2. An estimated value of an action taken at a particular state.
+1. Bellman Optimality Equation
+The Bellman Optimality Equation gives us the means to estimate the optimal value
+of each state, noted V*(s). It estimates the value of a state by computing the
+expected rewards that the state can generate.
+Here is the Bellman Optimality Equation (state-value function):
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comIn which:
+P(s, a, s’) is the transition probability from state s to state s’ when the agent
+chooses an action a.
+R(s, a, s’) is the immediate reward from state s to state s’ when the agent
+chooses an action a.
+𝛾 is the discounted rate. The discounted reward is written in a recursive way.
+You may wonder how to translate the discounted reward we introduced in my last
+post into a recursive notation. Perhaps the computing process below will give you
+a hint.
+In practice, you can first initialize all state-value estimates to zero. Then you
+iteratively update them with the results computed by the formula above. It will
+prove convergent.
+2. Q-Value Iteration Algorithm
+The optimal state value alone doesn’t tell the agent which action to take in each
+state. Fortunately — Inspired by the above concept of optimal state value —
+Bellman provides us with a similar formula to estimate the value of state-action
+pairs, named Q-Value.
+⏩ Q-Value: estimated value of action a taken at state s; noted as Q*(s, a)
+The Q-Value explicitly tells the agent which action should be chosen at each state,
+according to the Q-Value score.
+Here is how to compute Q-Value:
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comIn which:
+P(s, a, s’) is the transition probability from state s to state s’ when the agent
+chooses an action a.
+R(s, a, s’) is the immediate reward from state s to state s’ when the agent
+chooses an action a.
+𝛾 is the discounted rate. The discounted reward is written in a recursive way.
+max a’ Qk(s’, a’) is the value of the optimal action a’ at state s’
+Note: this function assumes the agent acts optimally after it chooses the action at
+the current state.
+As with the Bellman Optimality EquaEquation practice, you’ll start by initializing
+all the Q-value estimates to zero. Then you update them iteratively with the results
+computed by this formula.
+An MDP Implementation of Optimal Policy Search
+Now let’s put what we’ve learned in action! We’ll use our friend Adam’s MDP in
+Figure above to run an optimal policy search.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comFirst, we input the 5-tuple (S, A, P, R, 𝛾) into our demo to create an MDP
+environment.
+We use nan to represent the states at which we can’t arrive from the previous
+state.
+The variant actions is A. The action space with shape (s, a) is a 2-dimensional
+array.
+P represents the transition probability from state s to state s’, choosing action
+a. Its shape should be (s, a, s’), a 3-dimensional array.
+R represents the immediate reward received after a transition from state s to
+s’, due to action a. Its shape should be (s, a, s’), a 3-dimensional array.
+import numpy as np
+nan = np.nan
+actions = [[0, 1, 2], [0, 2], [0]]
+P = np.array([
+[[1.0, 0.0, 0.0], [0.2, 0.8, 0.0], [0.5, 0.5, 0.0]],
+[[0.8, 0.2, 0.0], [nan, nan, nan], [0.0, 0.0, 1.0]],
+[[1.0, 0.0, 0.0], [nan, nan, nan], [nan, nan, nan]],
+])
+R = np.array([
+[[20., 0.0, 0.0], [0.0, 0.0, 0.0], [-10., -10., 0.0]],
+[[40., 30., 0.0], [nan, nan, nan], [0.0, 0.0, -10.]],
+[[70., 0.0, 0.0], [nan, nan, nan], [nan, nan, nan]],
+])
+Now we have an MDP environment!
+Let’s use the Q-Value Iteration Algorithm to get Q*(s, a), which contains the score
+of action a at state s.
+We use -inf to represent the actions that we can’t take at the state s.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comInitialize Q*(s, a) with zeros.
+For each iteration, apply the Q-Value formula to each transition from state s to
+state s’, taking action a, and update Q*(s, a) with the new result.
+Q = np.full((3, 3), -np.inf)
+for s, a in enumerate(actions):
+Q[s, a] = 0.0
+discount_factor = 0.99
+iterations = 10
+for i in range(iterations):
+Q_previous = Q.copy()
+for s in range(len(P)):
+for a in actions[s]:
+sum_v = 0
+for s_next in range(len(P)):
+sum_v += P[s, a, s_next] * (R[s, a, s_next] +
+discount_factor *
+np.max(Q_previous[s_next]))
+Q[s, a] = sum_v
+print(Q)
+Here is the Q we get:
+These rows represent states, while the columns represent actions and the
+numbers represent the rewards of action a at state s.
+Adam’s Long-Awaited Results
+Here is what the demo tells us: The best course of action when Adam feels tired is
+to go get some sleep, then go to the gym and do a workout so he can be healthier,
+then go to work at peak efficiency.
+Summary
+In this series, we’ve learned Markov Decision Process, which is based on the
+Markov theory and Markov chain and supports Reinforcement Learning.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comUnderstanding MDP is a necessary step in deepening your knowledge of RL — and
+now you’re well on your way! You should know how to:
+Model a Markov Decision Process. Build the environment and set up ways to
+compute rewards from sequential decisions.
+Discount rewards. Evaluate an action in RL based on the value of current and
+future rewards.
+Implement an Optimal Policy Search. Using the Bellman Optimality Equation
+and Q-Value iteration algorithm.
+In my next post, we will step further into RL by exploring Q-learning. Follow me
+here to make sure you don’t miss it!
+Machine Learning
+AI
+Artificial Intelligence
+Reinforcement Learning
+Q Learning
+Written by dan lee
+415 Followers · Writer for AI³ | Theory, Practice, Business
+NLP Engineer, Google Developer Expert, AI Specialist in Yodo1
+More from dan lee and AI³ | Theory, Practice, Business
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comdan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 1: A Brief Introduction
+What is Reinforcement Learning and how is it used? Find out in 5 minutes!
+6 min read · Oct 17, 2019
+669
+2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comMarvin Wang, Min in AI³ | Theory, Practice, Business
+Use GPU in your PyTorch code
+Recently I installed my gaming notebook with Ubuntu 18.04, and took some time to make
+Nvidia driver as the default graphics driver ( since…
+4 min read · Sep 9, 2019
+137
+1
+Jelal Sultanov in AI³ | Theory, Practice, Business
+Standard Deviation & Variation concepts and Covariance & Correlation
+Techniques in ML
+Today we will have a look at one of the fundamental concepts in ML such as Standart
+Deviation and Variation, Covariance and Correlation…
+3 min read · Aug 26, 2019
+118
+1
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comdan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 5: Monte-Carlo and Temporal-Difference
+Learning
+A step-by-step approach to understanding Q-learning
+6 min read · Nov 21, 2019
+1K
+1
+Recommended from Medium
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comMohamed Yosef
+Reinforcement Learning — Policy gradient 101
+There are two approaches for solving any RL problem; value-based methods and policy-
+based methods. Policy gradient is a policy-based…
+5 min read · Feb 19, 2024
+101
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comRafał Buczyński in Python in Plain English
+Understanding Markov Decision Processes
+1. Introduction to Markov Decision Processes
+8 min read · Aug 31, 2023
+150
+Lists
+Natural Language Processing
+1228 stories · 714 saves
+Predictive Modeling w/ Python
+20 stories · 944 saves
+AI Regulation
+6 stories · 335 saves
+Generative AI Recommended Reading
+52 stories · 757 saves
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comHennie de Harder in Towards Data Science
+Techniques to Improve the Performance of a DQN Agent
+Reinforcement learning challenges and how to solve them.
+· 11 min read · Nov 30, 2022
+156
+1
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comHenry Wu
+Intro to Reinforcement Learning: Monte Carlo to Policy Gradient
+This post is an intro to reinforcement learning, in particular, Monte Carlo methods, Temporal
+Difference Learning, Deep Q-learning, Policy…
+16 min read · Feb 15, 2024
+124
+Krishna Jadhav
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comReinforcement Learning | Machine Learning Python implementation of
+the Q-learning algorithm
+In this publication, Krishna Jadhav provided a comprehensive overview of Reinforcement
+Learning and Q-learning algorithms.
+3 min read · Dec 2, 2023
+2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comSee more recommendations
+Aditya
+Reinforcement Learning in Chess
+11 min read · Nov 23, 2023
+350
+2
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com

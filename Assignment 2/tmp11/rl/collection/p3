@@ -1,0 +1,203 @@
+Reinforcement Learning, Part 3: The Markov
+Decision Process
+MDP in action: the next step toward solving real-life problems with RL and AI
+dan lee · Follow
+Published in AI³ | Theory, Practice, Business
+6 min read · Oct 30, 2019
+Welcome back to my AI blog! Now that we have an understanding of the Markov
+property and Markov chain, which I introduced in Reinforcement Learning, Part
+2, we’re ready to discuss the Markov Decision Process (MDP).
+In this article, we’ll use a simple example to explain this classic concept of
+machine learning.
+By the end, you’ll have a basic knowledge of:
+How the Markov Decision Process is defined;
+How MDP works with a simple example;
+Why and how to use Discounted Rewards.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comWhy We Need To Know MDP
+To understand why MDP is so critical to RL, we must recall the four necessary
+elements defined in Reinforcement Learning, Part 1. These are agent,
+environment, action, and reward. If you can frame your task in an MDP,
+congratulations! You’ve defined your environment. Now you have a space where
+the agent can take actions, get rewards, and learn.
+MDP is a framework that can solve most Reinforcement Learning problems with
+discrete actions. With the Markov Decision Process, an agent can arrive at an
+optimal policy (which we’ll discuss next week) for maximum rewards over time.
+Now, to build a practical understanding of how this works, let’s put forth our
+sample task: Today, we are going to help a young man by the name of Adam make
+sequential decisions to earn the greatest possible amount of money.
+Defining The Markov Decision Process (MDP)
+After reading my last article, you should have a pretty good idea of what the
+Markov Property is and what it looks like when we use a Markov Chain. That
+means we’re ready to dig into the essential Reinforcement Learning concept of
+MDP.
+Recall our discussion of the Markov Chain, which works with S, a set of states, and
+P, the probability of transitioning from one to the next. It also uses the Markov
+Property, meaning each state depends only on the one immediately prior to it.
+Figure 2: An example of the Markov decision process
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comNow, the Markov Decision Process differs from the Markov Chain in that it brings
+actions into play. This means the next state is related not only to the current state
+itself but also to the actions taken in the current state. Moreover, in MDP, some
+actions that correspond to a state can return rewards.
+In fact, the aim of MDP is to train an agent to find a policy that will return the
+maximum cumulative rewards from taking a series of actions in one or more
+states.
+Here’s a formulated definition, which is what you’ll probably get if you google
+Markov Decision Process:
+Now, let’s apply this framework to Figure 2 above for a more concrete
+understanding of these abstract notes:
+▶ MDP in Action: Learning with Adam
+We can make this even easier to grasp with a story, using Adam as our example.
+As we know, this hard-working young man wants to make as much money as he
+can. Using the framework defined above, we can help him do just that.
+▶ When Adam’s state is Tired, he can choose one of three actions: (1) continue
+working, (2) go to the gym, and (3) get some sleep.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comIf he chooses to work, he remains in the Tired state with the certainty of getting a
++20 reward. if he chooses to sleep, he has 80% of moving to the next state,
+Energetic, and a 20% chance of staying Tired.
+If he doesn’t want to sleep, he may go to the gym and do a workout. This gives him
+a 50% chance of entering the Energetic state and a 50% chance of staying Tired.
+However, he needs to pay for the gym, so this choice results in a -10 reward.
+▶ When Adam becomes Energetic, he can go back to work and be more efficient.
+From there, he has an 80% chance of getting Tired again (with a +40 reward), and a
+20% chance of staying Energetic (with a +30 reward).
+Sometimes, when he is Energetic, he wants to do a workout. When he exercises in
+this state, he has a good time and gets 100% getting Healthier. Of course, he needs
+to pay for it with a -10 reward.
+▶ Once he arrives at the state Healthier, there is only one thing on his mind: earn
+more money by doing more work. Because he is in such a good state, he works at
+peak efficiency, earns a +100 reward, and keeps working until he gets tired again.
+With the above information, we can train an agent aimed at helping Adam find
+the best policy to maximize his rewards over time. This agent will undertake a
+Markov Decision Process.
+However, before we can do that, we need to know how to compute the cumulative
+reward when an action is taken in one state. That is to say, we must be able to
+estimate the state value.
+Don’t worry! This will only take a minute to cover.
+Discounted Reward
+As we learned in my introduction to RL, Reinforcement Learning is a multi-
+decision process. Unlike the “one instance, one prediction” model of supervised
+learning, an RL agent’s target is to maximize the cumulative rewards of a series of
+decisions — not simply the immediate reward from one decision.
+It requires the agent to look into the future while simultaneously collecting
+current rewards.
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comIn Adam’s example above, future rewards are as important as current rewards. But
+in the CartPole game we discussed here, surviving in the present is more
+important than anything else.
+Because future rewards can be valued differently depending on the scenario, we
+need a mechanism to discount the importance of future rewards at different time
+steps.
+The above symbol for a discounted rate or factor is the key to this mechanism.
+The rewards computed by it are referred to as discounted rewards.
+Consider the information above. If the discount rate is close to 0, future rewards
+won’t count for much in comparison to immediate rewards. In contrast, if the
+discount rate is close to 1, rewards that are far in the future will be almost as
+important as immediate rewards.
+In short, discounted reward how we estimate the value of a state.
+Summary
+So far in our Reinforcement Learning series, we’ve learned:
+1. What Reinforcement Learning is and how it’s used in everyday life.
+2. How the Markov Property and Chain work to generate words.
+3. And now, we know how to use MDP and Discounted Reward.
+With MDP, we can help Adam make the decisions that will guarantee maximum
+earnings without detriment to his health. In the real world, you can collect data
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comthat reflects reality, analyze the statistics, and create effective MDPs to solve all
+kinds of problems!
+Come back next week to learn how to make an optimal policy search with MDP.
+Questions or suggestions? You can get in touch via email. To make sure you don’t
+miss my latest posts, be sure to follow!
+Machine Learning
+AI
+Reinforcement Learning
+Artificial Intelligence
+Written by dan lee
+415 Followers · Writer for AI³ | Theory, Practice, Business
+NLP Engineer, Google Developer Expert, AI Specialist in Yodo1
+More from dan lee and AI³ | Theory, Practice, Business
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comdan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 1: A Brief Introduction
+What is Reinforcement Learning and how is it used? Find out in 5 minutes!
+6 min read · Oct 17, 2019
+669
+2
+Marvin Wang, Min in AI³ | Theory, Practice, Business
+Use GPU in your PyTorch code
+Recently I installed my gaming notebook with Ubuntu 18.04, and took some time to make
+Nvidia driver as the default graphics driver ( since…
+4 min read · Sep 9, 2019
+137
+1
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comdan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 4: Optimal Policy Search with MDP
+Training an agent to make decisions that will maximize rewards over time
+6 min read · Nov 9, 2019
+316
+5
+dan lee in AI³ | Theory, Practice, Business
+Reinforcement Learning, Part 5: Monte-Carlo and Temporal-Difference
+Learning
+A step-by-step approach to understanding Q-learning
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com6 min read · Nov 21, 2019
+1K
+1
+Recommended from Medium
+Mohamed Yosef
+Reinforcement Learning — Policy gradient 101
+There are two approaches for solving any RL problem; value-based methods and policy-
+based methods. Policy gradient is a policy-based…
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com5 min read · Feb 19, 2024
+101
+Rafał Buczyński in Python in Plain English
+Understanding Markov Decision Processes
+1. Introduction to Markov Decision Processes
+8 min read · Aug 31, 2023
+150
+Lists
+Natural Language Processing
+1228 stories · 714 saves
+Predictive Modeling w/ Python
+20 stories · 944 saves
+AI Regulation
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com6 stories · 335 saves
+Generative AI Recommended Reading
+52 stories · 757 saves
+Henry Wu
+Intro to Reinforcement Learning: Monte Carlo to Policy Gradient
+This post is an intro to reinforcement learning, in particular, Monte Carlo methods, Temporal
+Difference Learning, Deep Q-learning, Policy…
+16 min read · Feb 15, 2024
+124
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comHennie de Harder in Towards Data Science
+Techniques to Improve the Performance of a DQN Agent
+Reinforcement learning challenges and how to solve them.
+· 11 min read · Nov 30, 2022
+156
+1
+Souptik Majumder
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comp
+j
+Understanding Markov Reward Process and Markov Decision Process
+This is a follow-up article on a series of foundational articles to understand about
+Reinforcement Learning. If you are interested in…
+7 min read · Nov 19, 2023
+13
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.comAustin Starks in Artificial Intelligence in Plain English
+Reinforcement Learning is Dead. Long Live the Transformer!
+Large Language Models are more powerful than you imagine
+8 min read · Jan 13, 2024
+1.2K
+35
+Convert web pages and HTML files to PDF in your applications with the Pdfcrowd HTML to PDF API
+Printed with Pdfcrowd.com
